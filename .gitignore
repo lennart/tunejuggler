@@ -1,0 +1,15 @@
+*.log
+.sass-cache/
+bin/
+watch
+tags
+*.swp
+*.swo
+log/*
+tmp/*
+Capfile
+db/
+config/deploy.rb
+vendor
+!vendor/gems/cache
+public/stylesheets
