@@ -1,4 +1,3 @@
-set :database, 'sqlite://db/development.db'
 
 load 'lib/models/you_tube_video.rb'
 load 'lib/workers/indexer.rb'
