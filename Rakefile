@@ -6,17 +6,28 @@ require 'fileutils'
 require 'resque/tasks'
 require 'cucumber/rake/task'
 
+namespace :app do
+  desc "Create Standard Folders" 
+  task :defaults do
+    %w{db tmp log public}.each do |dir|
+      FileUtils.mkdir_p relative_path.call(dir), :verbose => true unless File.exists?(dir)
+    end
+  end
+end
+
 namespace :index do
   desc "Clear Index"
-  task :clear do
+  task :clear => :"app:defaults" do
     FileUtils.rm_rf relative_path.call(%w{tmp ferret}), :verbose => true
   end
 end
 
 namespace :db do
   desc "Drop database"
-  task :drop do
-    FileUtils.rm relative_path.call(%w{db development.db}), :verbose => true
+  task :drop => :"app:defaults" do
+    Dir[relative_path.call(%w{db *.db})].each do |db|
+      FileUtils.rm db, :verbose => true
+    end
   end
 end
 
