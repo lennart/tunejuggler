@@ -1,4 +1,3 @@
-load 'lib/models/you_tube_video.rb'
 class Indexer
   @queue = :index
   class << self

@@ -3,6 +3,16 @@ unless Object.const_defined? :SINATRA_ROOT
     def blank?
       self.nil? || self.strip == ""
     end
+
+    def camelize first_letter_in_uppercase = true
+     
+      if first_letter_in_uppercase
+        self.gsub(/\/(.?)/) { "::#{$1.upcase}" }.gsub(/(?:^|_)(.)/) { $1.upcase }
+      else
+        self.first.downcase + camelize(self)[1..-1]
+      end
+    end
+
   end
 
   class NilClass
@@ -21,11 +31,8 @@ unless Object.const_defined? :SINATRA_ROOT
   SINATRA_ROOT=::File.expand_path(::File.join(::File.dirname(__FILE__),"..")) 
   INDEX_PATH=File.expand_path(File.join(File.dirname(__FILE__),%w{.. tmp ferret index}))
 end
-
 set :database, "sqlite://db/#{ENV["RACK_ENV"] || "development"}.db"
-
 Dir[File.join(File.dirname(__FILE__),%w{.. lib ** *.rb})].each do |path|
   klass = File.basename(path,File.extname(path)).camelize.to_sym
-  puts "Autloading #{klass} from #{path}"
   autoload klass, path
 end

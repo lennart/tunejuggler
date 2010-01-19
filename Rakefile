@@ -4,6 +4,7 @@ end
 require relative_path.call(%w{config boot})
 require 'fileutils'
 require 'resque/tasks'
+require 'cucumber/rake/task'
 
 namespace :index do
   desc "Clear Index"
@@ -22,4 +23,8 @@ end
 desc "Reset to blank slate"
 task :reset => [:"db:drop",:"index:clear"] do
   puts "Complete"
+end
+
+Cucumber::Rake::Task.new(:features) do |t|
+  t.cucumber_opts = "features --format pretty -b"
 end

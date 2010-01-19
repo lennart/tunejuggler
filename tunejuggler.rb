@@ -1,6 +1,3 @@
-
-load 'lib/models/you_tube_video.rb'
-load 'lib/workers/indexer.rb'
 RELEVANCE_THRESHOLD = (ENV["RELEVANCE_THRESHOLD"] || 0.5).to_f
 Indexer.index
 helpers do
@@ -39,23 +36,26 @@ end
 
 get "/collections/:id/tracks.json" do |id|
   c = Collection.find(id)
-  [c, c.songs].to_json
+  [c, *c.songs].to_json
 end
 
 post "/collections.json" do 
-  c = Collection.create JSON.parse(params)
+  json = JSON.parse(request.body.read.to_s)
+  c = Collection.create json
   c.to_json
 end
 
 put "/collections/:id/tracks.json" do |id|
-  c = Collection.find(id)
-  s = Song.create JSON.parse(params)
+  data = request.body.read.to_s
+  json = JSON.parse(data)
+  c = Collection.find(:id => id)
+  halt [404, "Collection not found"] if c.nil?
+  s = Song.new json
+  halt [400, "Song data invalid"] unless s.save
   c.add_song s
   c.save
-  [c, c.songs].to_json
+  [c,*c.songs].to_json
 end
-
-
 
 post "/search.json" do 
   if (results = Search.query(params[:query])).empty?

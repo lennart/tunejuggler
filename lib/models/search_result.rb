@@ -17,16 +17,28 @@ end
 class SearchResult < Sequel::Model
   API_ROOT = URI.parse("http://api.blip.fm/blip/").freeze
   WEB_ROOT = URI.parse("http://beta.blip.fm/").freeze
-  def to_json
+  def to_json *args
     json = {:id => self.id, :title => self.title}
     %w{video_id blip_id artist embed_url duration url}.each do |a|
       value = self.method(a.to_sym).call
       json[a.to_sym] = value if value
     end
     if self.tags
-      json[:tags] = self.tags.split(" ")
+      json[:tags] = self.tags.split(",")
     end
     json.to_json
+  end
+
+  def save!
+    raise unless self.save
+  end
+
+  def tags= new_tags
+    if new_tags.kind_of?(Array)
+      self["tags"] = new_tags.map {|t| t.gsub(/,/," ")}.join(",")
+    else
+      self["tags"] = new_tags
+    end
   end
 
   class << self
@@ -53,8 +65,6 @@ class SearchResult < Sequel::Model
       end
     end
 
-
-
     def find_or_create_blip raw_blip, always_save = true
       blip = self[:blip_id => raw_blip["id"]]
       if blip
@@ -71,19 +81,18 @@ class SearchResult < Sequel::Model
           blip.url = raw_blip["url"]
         end
         blip.user = raw_blip["ownerId"]
-        puts "Blip building: #{blip}"
         yield blip
         blip.save if always_save
         blip
       end
     end
 
+    private
+
     def fetch_raw_blip_by_id id
       raw_blip = api_perform "getById.json", {:id => id}
       JSON.parse(raw_blip)["result"]["collection"]["Blip"].first
     end
-
-    private
 
     def web_perform path, query = {}
       url = web_root_url path, query
