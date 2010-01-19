@@ -32,6 +32,7 @@ unless Object.const_defined? :SINATRA_ROOT
   INDEX_PATH=File.expand_path(File.join(File.dirname(__FILE__),%w{.. tmp ferret index}))
 end
 set :database, "sqlite://db/#{ENV["RACK_ENV"] || "development"}.db"
+#Resque.redis.instance_variable_set "@logger", Logger.new(File.join(File.dirname(__FILE__),"..","log","resque.log"))
 Dir[File.join(File.dirname(__FILE__),%w{.. lib ** *.rb})].each do |path|
   klass = File.basename(path,File.extname(path)).camelize.to_sym
   autoload klass, path

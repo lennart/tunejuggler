@@ -58,7 +58,8 @@ put "/collections/:id/tracks.json" do |id|
 end
 
 post "/search.json" do 
-  if (results = Search.query(params[:query])).empty?
+  string = params[:query]
+  if (results = Search.query(string)).empty?
     additions = []
 
     results = Search.query_youtube(string) do |result|
