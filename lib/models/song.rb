@@ -45,6 +45,10 @@ class Song < Sequel::Model
     end
   end
 
+  def save!
+    raise unless self.save
+  end
+
   def content
     begin
       JSON.parse self.json

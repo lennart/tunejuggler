@@ -7,6 +7,8 @@ migration "Create Search Result table" do
     String :blip_id
     String :user
     String :url
+    String :message
+    String :timestamp
     String :artist
     String :embed_url
     String :tags
@@ -68,19 +70,20 @@ class SearchResult < Sequel::Model
     def find_or_create_blip raw_blip, always_save = true
       blip = self[:blip_id => raw_blip["id"]]
       if blip
-        puts "Blip found: #{blip.to_yaml}"
         yield blip
       else
-        
         blip = self.new :title => raw_blip["title"], :blip_id => raw_blip["id"]
         blip.artist = raw_blip["artist"] unless raw_blip["artist"].blank?
-        case blip["type"]
+        case raw_blip["type"]
         when "youtubeVideo" then
           blip.video_id = raw_blip["url"]
         when "songUrl" then
           blip.url = raw_blip["url"]
         end
+        blip.tags = [raw_blip["genre"]] unless raw_blip["genre"].blank?
+        blip.message = raw_blip["message"]
         blip.user = raw_blip["ownerId"]
+        blip.timestamp = raw_blip["unixTime"]
         yield blip
         blip.save if always_save
         blip

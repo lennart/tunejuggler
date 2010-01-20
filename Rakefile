@@ -5,6 +5,7 @@ require relative_path.call(%w{config boot})
 require 'fileutils'
 require 'resque/tasks'
 require 'cucumber/rake/task'
+require 'spec/rake/spectask'
 
 namespace :app do
   desc "Create Standard Folders" 
@@ -38,4 +39,23 @@ end
 
 Cucumber::Rake::Task.new(:features) do |t|
   t.cucumber_opts = "features --format pretty -b"
+end
+desc "Run all specs"
+Spec::Rake::SpecTask.new('spec') do |t|
+  t.spec_opts = File.read("spec/spec.opts").split(/\n/)
+  t.spec_opts  << "-rspec/spec_helper"
+  t.spec_files = FileList["spec/**/*_spec.rb"]
+end
+
+namespace :spec do
+  Dir["spec/*"].select {|d| File.directory? d }.each do |dir|
+    folder = File.basename dir
+    desc "Run #{folder} specs"
+    Spec::Rake::SpecTask.new(folder) do |t|
+      t.spec_opts = File.read("spec/spec.opts").split(/\n/)
+      t.spec_opts  << "-rspec/spec_helper"
+
+      t.spec_files = FileList["spec/#{folder}/*_spec.rb"]
+    end
+  end
 end
