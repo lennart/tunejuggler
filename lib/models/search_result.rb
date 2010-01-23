@@ -26,7 +26,7 @@ class SearchResult < Sequel::Model
       json[a.to_sym] = value if value
     end
     if self.tags
-      json[:tags] = self.tags.split(",")
+      json[:tags] = self.tags
     end
     json.to_json
   end
