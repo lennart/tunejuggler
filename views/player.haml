@@ -8,7 +8,7 @@
       var params = { allowScriptAccess: "always" };
       var atts = { id: "myytplayer" };
       function onYouTubePlayerReady(playerId) {
-        player = document.getElementById("myytplayer");
+      player = document.getElementById("myytplayer");
       ="player.loadVideoById('#{video_id}',null,'hd720');"
       }
       swfobject.embedSWF('http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer&version=3', 'ytapiplayer', '425', '356', '8', null, null, params, atts);
