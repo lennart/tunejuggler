@@ -84,7 +84,7 @@ end
 
 __END__
 
-@@player
+@@ player
 %html
   %body
     %script{ :type => "text/javascript", :src => "swfobject.js" }
