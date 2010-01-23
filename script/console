@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 # This console script adapted from:rake
 #   http://barkingiguana.com/blog/2009/01/25/scriptconsole-for-your-application/
-
+ENV["RACK_ENV"] = ARGV[0] || "development"
 libs = []
 libs << "irb/completion"
 libs << File.join(File.dirname(__FILE__),*%w{.. config boot})

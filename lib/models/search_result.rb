@@ -37,10 +37,15 @@ class SearchResult < Sequel::Model
 
   def tags= new_tags
     if new_tags.kind_of?(Array)
-      self["tags"] = new_tags.map {|t| t.gsub(/,/," ")}.join(",")
+      self[:tags] = tags.concat(new_tags.map {|t| t.gsub(/,/," ")}).join(",")
     else
-      self["tags"] = new_tags
+      self[:tags] = tags.concat(new_tags.split(",")).join(",")
     end
+    tags
+  end
+
+  def tags
+    self[:tags] ? self[:tags].split(",") : []
   end
 
   class << self
@@ -72,14 +77,19 @@ class SearchResult < Sequel::Model
       if blip
         yield blip
       else
-        blip = self.new :title => raw_blip["title"], :blip_id => raw_blip["id"]
-        blip.artist = raw_blip["artist"] unless raw_blip["artist"].blank?
-        case raw_blip["type"]
+        blip = case raw_blip["type"]
         when "youtubeVideo" then
-          blip.video_id = raw_blip["url"]
+          if blip = self[:video_id => raw_blip["url"]]
+            blip.title = raw_blip["title"]
+            blip.blip_id = raw_blip["id"]
+            blip
+          else
+            self.new :title => raw_blip["title"], :blip_id => raw_blip["id"], :video_id => raw_blip["url"]
+          end
         when "songUrl" then
-          blip.url = raw_blip["url"]
+          self.new :title => raw_blip["title"], :blip_id => raw_blip["id"], :url => raw_blip["url"]
         end
+        blip.artist = raw_blip["artist"] unless raw_blip["artist"].blank?
         blip.tags = [raw_blip["genre"]] unless raw_blip["genre"].blank?
         blip.message = raw_blip["message"]
         blip.user = raw_blip["ownerId"]
