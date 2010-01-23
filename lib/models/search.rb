@@ -60,7 +60,7 @@ class Search
             :title => v.title,
             :duration => v.duration,
             :embed_url => v.embed_url,
-            :tags => v.keywords.join(" ")}
+            :tags => v.keywords}
           video = SearchResult.new params
 
           yield video
