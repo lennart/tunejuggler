@@ -81,18 +81,3 @@ post "/search.json" do
     results
   end.to_json
 end
-
-__END__
-
-@@ player
-%html
-  %body
-    %script{ :type => "text/javascript", :src => "swfobject.js" }
-
-    %div#ytapiplayer
-      You need Flash player 8+ and JavaScript enabled to view this video.
-    %script{ :type => "text/javascript" }
-      var params = { allowScriptAccess: "always" };
-      var atts = { id: "myytplayer" };
-      ="swfobject.embedSWF('http://www.youtube.com/v/#{video_id}?enablejsapi=1&playerapiid=ytplayer', 'ytapiplayer', '425', '356', '8', null, null, params, atts)"
-
