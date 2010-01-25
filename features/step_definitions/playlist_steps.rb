@@ -41,8 +41,17 @@ Given /^a song exists with a title of "([^\"]*)"$/ do |title|
   c.add_song s
 end
 
-
 When /^I want to see the playlist with tracks$/ do
   get "/collections/#{Collection.first.id}/tracks.json"
+end
+
+When /^I want to look a the latest playlist$/ do
+  get "/collections/latest.json"
+end
+
+Then /^I should get "([^\"]*)"$/ do |title|
+  last_response.should be_ok
+  collection = JSON.parse(last_response.body)
+  collection["title"].should == title
 end
 

@@ -33,6 +33,9 @@ get "/blip/:user.json" do |user|
   blips.to_json
 end
 
+get "/collections/latest.json" do
+  Collection.order(:updated_at.desc).first.to_json
+end
 
 get "/collections/:id/tracks.json" do |id|
   c = Collection.find(id)

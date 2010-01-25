@@ -16,3 +16,9 @@ Feature: Build a Playlist
     Given It's my birthday
     When I create a playlist named "Lenni's Birthday Party Playlist"
     Then I should get a Collection with an id in return
+
+  Scenario: Get the latest Playlist
+    Given a collection exists with a title of "Last nite"
+    And a collection exists with a title of "Tonight's the night"
+    When I want to look a the latest playlist
+    Then I should get "Tonight's the night"

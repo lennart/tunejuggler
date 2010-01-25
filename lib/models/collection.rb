@@ -4,11 +4,13 @@ migration "Create Collection table" do
     String :title
     String :user
     String :tags
+    Time :created_at
+    Time :updated_at
   end
 
 end
-
 class Collection < Sequel::Model
+  plugin :timestamps, :update_on_create => true
   one_to_many :songs
     
   def to_json *args
