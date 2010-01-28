@@ -4,8 +4,8 @@ helpers do
   def read_body_as_json
     begin
       JSON.parse request.body.read.to_s
-    rescue JSON::ParserError
-      halt [400, {:error => "invalid JSON"}.to_json]
+    rescue JSON::ParserError => e
+      halt [400, {:error => "invalid JSON", :reason => e.message }.to_json]
     end
   end
 end
