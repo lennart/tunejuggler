@@ -55,7 +55,9 @@ get "/blip/:user.json" do |user|
 end
 
 get "/collections/latest.json" do
-  (Collection.order(:updated_at.desc).first || "").to_json
+  collection = Collection.order(:updated_at.desc).first
+  halt [404, {:error => :not_found}.to_json] unless collection
+  collection.to_json
 end
 
 get "/collections/:id/tracks.json" do |id|
