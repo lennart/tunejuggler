@@ -55,7 +55,7 @@ get "/blip/:user.json" do |user|
 end
 
 get "/collections/latest.json" do
-  Collection.order(:updated_at.desc).first.to_json
+  (Collection.order(:updated_at.desc).first || "").to_json
 end
 
 get "/collections/:id/tracks.json" do |id|
