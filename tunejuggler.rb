@@ -1,6 +1,27 @@
 RELEVANCE_THRESHOLD = (ENV["RELEVANCE_THRESHOLD"] || 0.5).to_f
 Indexer.index
 helpers do
+  def read_body_as_json
+    begin
+      JSON.parse request.body.read.to_s
+    rescue JSON::ParserError
+      halt [400, {:error => "invalid JSON"}.to_json]
+    end
+  end
+end
+
+get "/api.json" do
+#  "/collections.json"
+#  api = { :collections => 
+#          { :tracks => {
+#            :methods => %w{get post put}
+#            :required_attributes => %w{} }
+#          }, 
+#            :methods => %w{post put}, 
+#            :required_attributes => %w{title} }
+#    }
+#  CODE
+
 end
 
 get "/blip/timeline/:user.json" do |user|
@@ -47,14 +68,37 @@ get "/player/:id" do |video_id|
 end
 
 post "/collections.json" do 
-  json = JSON.parse(request.body.read.to_s)
+  json = read_body_as_json
   c = Collection.create json
+  response.status = 201
   c.to_json
 end
 
-put "/collections/:id/tracks.json" do |id|
-  data = request.body.read.to_s
-  json = JSON.parse(data)
+put "/collections/:id.json" do |id|
+  json = read_body_as_json
+  collection = Collection.find(:id => id)
+  halt [404, {:error => :not_found}.to_json] unless collection
+  collection.merge(json)
+  collection
+end
+
+get "/collections.json" do
+  Collection.all.to_json
+end
+
+delete "/collections/:id.json" do |id|
+  collection = Collection.find(:id => id)
+  halt [404, {:error => :not_found}.to_json] unless collection
+  {:result => collection.destroy}.to_json
+end
+
+
+post "/collections/:id/tracks.json" do |id|
+  response.status = 201
+end
+
+put "/collections/:collection_id/tracks/:id.json" do |collection_id, id|
+  json = read_body_as_json
   c = Collection.find(:id => id)
   halt [404, "Collection not found"] if c.nil?
   s = Song.new json
@@ -78,6 +122,7 @@ post "/search.json" do
     unless additions.empty?
       Resque.enqueue(Indexer,additions)
     end
+    Son
 
     results
   else

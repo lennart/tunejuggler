@@ -6,7 +6,6 @@ When /^I add a Song to the playlist$/ do
 end
 
 Then /^I should get the Playlist with all Tracks in return$/ do
-  last_response.should be_ok
   json = JSON.parse(last_response.body)
   collection = json.shift
   collection["id"].should == Collection.first.id
@@ -29,7 +28,6 @@ When /^I create a playlist named "([^\"]*)"$/ do |title|
 end
 
 Then /^I should get a Collection with an id in return$/ do
-  last_response.should be_ok
   json = JSON.parse last_response.body
   json["id"].should_not be_nil
   json["title"].should == @title
@@ -50,7 +48,6 @@ When /^I want to look a the latest playlist$/ do
 end
 
 Then /^I should get "([^\"]*)"$/ do |title|
-  last_response.should be_ok
   collection = JSON.parse(last_response.body)
   collection["title"].should == title
 end

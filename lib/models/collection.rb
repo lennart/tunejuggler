@@ -12,6 +12,7 @@ end
 class Collection < Sequel::Model
   plugin :timestamps, :update_on_create => true
   one_to_many :songs
+
     
   def to_json *args
     json = {:id => self.id, :title => self.title}
@@ -23,6 +24,11 @@ class Collection < Sequel::Model
       json[:tags] = self.tags.split(",")
     end
     json.to_json
+      
+  end
+
+  def merge json
+
   end
 
   def tags= new_tags
@@ -33,7 +39,11 @@ class Collection < Sequel::Model
     end
   end
 
-  def save!
+  def bla
+    
+  end
+
+  def save!()
     raise unless self.save
   end
 end
