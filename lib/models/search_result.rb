@@ -77,7 +77,6 @@ class SearchResult < Sequel::Model
     end
 
     def find_or_create_blip raw_blip, always_save = true
-      puts "Blip: #{raw_blip.to_yaml}"
       blip = self[:blip_id => raw_blip["id"]]
       if blip
         yield blip
@@ -124,7 +123,6 @@ class SearchResult < Sequel::Model
     end
 
     def perform host, path, query = ""
-      puts "Performing GET #{host}#{path}?#{query.to_s}"
       Net::HTTP.start(host,80) do |http|
         http.get path+"?"+query.to_s
       end.body
