@@ -116,7 +116,8 @@ put "/collections/:collection_id/tracks/:id.json" do |collection_id, id|
 end
 
 post "/search.json" do 
-  string = params[:query]
+  string = read_body_as_json["query"]
+  halt [404, {:error => :query_missing}.to_json] if string.blank?
   if (results = Search.query(string)).empty?
     additions = []
 
