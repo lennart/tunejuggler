@@ -53,10 +53,14 @@ class SearchResult < Sequel::Model
     def fetch_blip_timeline username, always_save = true
       blip_list_parse = LibXML::XML::Parser.string web_perform("feed/#{username}")
       blip_list = blip_list_parse.parse.find_first("channel").find("//item")
-      blip_list.map do |item|
+      blip_ids = blip_list.map do |item|
         blip_uri = URI.parse URI.escape(item.find_first("link").content)
-        blip_id = blip_uri.path.split("/")[4].to_i
-        find_or_create_blip({"id" => blip_id}, always_save) do |blip|
+        id = blip_uri.path.split("/")[4].to_i
+        id
+      end
+      raw_blips = fetch_raw blip_ids
+      raw_blips.select {|s| %w{youtubeVideo songUrl}.include?(s["type"]) }.map do |raw_blip|
+        find_or_create_blip(raw_blip, always_save) do |blip|
           yield blip
         end
       end
@@ -73,15 +77,11 @@ class SearchResult < Sequel::Model
     end
 
     def find_or_create_blip raw_blip, always_save = true
+      puts "Blip: #{raw_blip.to_yaml}"
       blip = self[:blip_id => raw_blip["id"]]
       if blip
         yield blip
       else
-        raw_blip = if raw_blip.has_key?("type")
-                     raw_blip
-                   else
-                     raw_blip = fetch_raw_blip_by_id(raw_blip["id"])
-                   end
         blip = case raw_blip["type"]
                when "youtubeVideo" then
                  if blip = self[:video_id => raw_blip["url"]]
@@ -107,9 +107,10 @@ class SearchResult < Sequel::Model
 
     private
 
-    def fetch_raw_blip_by_id id
-      raw_blip = api_perform "getById.json", {:id => id}
-      JSON.parse(raw_blip)["result"]["collection"]["Blip"].first
+    def fetch_raw single_or_multiple_ids
+      id_string = single_or_multiple_ids.kind_of?(Array) ? single_or_multiple_ids.join(",") : single_or_multiple_ids
+      raw_blip = api_perform "getById.json", {:id => id_string}
+      JSON.parse(raw_blip)["result"]["collection"]["Blip"]
     end
 
     def web_perform path, query = {}
@@ -123,6 +124,7 @@ class SearchResult < Sequel::Model
     end
 
     def perform host, path, query = ""
+      puts "Performing GET #{host}#{path}?#{query.to_s}"
       Net::HTTP.start(host,80) do |http|
         http.get path+"?"+query.to_s
       end.body
