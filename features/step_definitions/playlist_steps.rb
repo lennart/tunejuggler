@@ -2,7 +2,7 @@ When /^I add a Song to the playlist$/ do
   s = SearchResult.first
   c = Collection.first
   json = s.to_json
-  put "/collections/#{c.id}/tracks.json", {}, :input => json
+  post "/collections/#{c.id}/tracks.json", {}, :input => json
 end
 
 Then /^I should get the Playlist with all Tracks in return$/ do

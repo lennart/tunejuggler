@@ -100,19 +100,37 @@ get "/collections/:id/tracks.json" do |id|
   [c, *c.songs].to_json
 end
 
-post "/collections/:id/tracks.json" do |id|
-  response.status = 201
-end
-
-put "/collections/:collection_id/tracks/:id.json" do |collection_id, id|
+post "/collections/:id/tracks.json" do |collection_id|
   json = read_body_as_json
-  c = Collection.find(:id => id)
+  c = Collection.find(:id => collection_id)
   halt [404, "Collection not found"] if c.nil?
   s = Song.new json
   halt [400, "Song data invalid"] unless s.save
   c.add_song s
   c.save
-  [c,*c.songs].to_json
+  #response.status = 201
+
+  result = [c,*c.songs].to_json
+  puts result
+  result
+end
+
+put "/songs/:id.json" do |id|
+  json = read_body_as_json
+#  halt [404, "Collection not found"] if c.nil?
+  s = Song.find(:id => id)
+#  s.set_except(json, "id")
+ # s.merge json
+#  halt [400, "Song data invalid"] unless s.save
+ # c.add_song s
+ # c.save
+#  [c,*c.songs].to_json
+end
+
+delete "/songs/:id.json" do |id|
+  s = Song.find(:id => id)
+  halt [400, "Song data invalid"] unless s
+  {:result => s.destroy}.to_json
 end
 
 post "/search.json" do 
