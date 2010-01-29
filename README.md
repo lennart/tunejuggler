@@ -28,6 +28,10 @@ Requirements
     * libxml-ruby
     * json
 
+Getting started
+---------------
+fire up a passenger, thin, webrick or mongrel to run the tunejuggler using `config.ru`. To start the indexer (which is needed to cache the results) run `QUEUE=* rake resque:work`
+
 What **tuneJuggler** isn't
 --------------------------
 
@@ -43,7 +47,7 @@ __POST__
 
 * `/search.json`  
     Search locally, or if necessary over at youtube  
-    __params__ `:query` => search_string
+    __body__ `:query` => search_string
 
 * `/collections.json`  
     Create a new Collection in the Database  
