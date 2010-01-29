@@ -56,7 +56,7 @@ class SearchResult < Sequel::Model
       blip_list.map do |item|
         blip_uri = URI.parse URI.escape(item.find_first("link").content)
         blip_id = blip_uri.path.split("/")[4].to_i
-        find_or_create_blip({"id" => blip_id, "title" => item.find_first("title").content}, always_save) do |blip|
+        find_or_create_blip({"id" => blip_id}, always_save) do |blip|
           yield blip
         end
       end
@@ -77,18 +77,23 @@ class SearchResult < Sequel::Model
       if blip
         yield blip
       else
+        raw_blip = if raw_blip.has_key?("type")
+                     raw_blip
+                   else
+                     raw_blip = fetch_raw_blip_by_id(raw_blip["id"])
+                   end
         blip = case raw_blip["type"]
-        when "youtubeVideo" then
-          if blip = self[:video_id => raw_blip["url"]]
-            blip.title = raw_blip["title"]
-            blip.blip_id = raw_blip["id"]
-            blip
-          else
-            self.new :title => raw_blip["title"], :blip_id => raw_blip["id"], :video_id => raw_blip["url"]
-          end
-        when "songUrl" then
-          self.new :title => raw_blip["title"], :blip_id => raw_blip["id"], :url => raw_blip["url"]
-        end
+               when "youtubeVideo" then
+                 if blip = self[:video_id => raw_blip["url"]]
+                   blip.title = raw_blip["title"]
+                   blip.blip_id = raw_blip["id"]
+                   blip
+                 else
+                   self.new :title => raw_blip["title"], :blip_id => raw_blip["id"], :video_id => raw_blip["url"]
+                 end
+               when "songUrl" then
+                 self.new :title => raw_blip["title"], :blip_id => raw_blip["id"], :url => raw_blip["url"]
+               end
         blip.artist = raw_blip["artist"] unless raw_blip["artist"].blank?
         blip.tags = [raw_blip["genre"]] unless raw_blip["genre"].blank?
         blip.message = raw_blip["message"]
