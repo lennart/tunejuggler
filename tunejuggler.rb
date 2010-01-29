@@ -60,13 +60,12 @@ get "/collections/latest.json" do
   collection.to_json
 end
 
-get "/collections/:id/tracks.json" do |id|
-  c = Collection.find(id)
-  [c, *c.songs].to_json
-end
-
 get "/player/:id" do |video_id|
   haml :player, {}, :video_id => video_id
+end
+
+get "/collections.json" do
+  Collection.all.to_json
 end
 
 post "/collections.json" do 
@@ -84,8 +83,10 @@ put "/collections/:id.json" do |id|
   collection
 end
 
-get "/collections.json" do
-  Collection.all.to_json
+get "/collections/:id.json" do |id|
+  collection = Collection.find(:id => id)
+  halt [404, {:error => :not_found}.to_json] unless collection
+  collection.to_json
 end
 
 delete "/collections/:id.json" do |id|
@@ -94,6 +95,10 @@ delete "/collections/:id.json" do |id|
   {:result => collection.destroy}.to_json
 end
 
+get "/collections/:id/tracks.json" do |id|
+  c = Collection.find(id)
+  [c, *c.songs].to_json
+end
 
 post "/collections/:id/tracks.json" do |id|
   response.status = 201
