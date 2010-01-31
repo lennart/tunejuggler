@@ -11,7 +11,7 @@ class Search
         doc_id = current_searcher[id][:doc_id]
         video = SearchResult[doc_id]
         puts "found #{id} with doc_id #{doc_id} and video #{video} and Score of #{score}"
-        puts current_searcher.explain(parsed_query,id).to_s
+#        puts current_searcher.explain(parsed_query,id).to_s
         if score > RELEVANCE_THRESHOLD
           results << video
         else
