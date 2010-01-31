@@ -36,6 +36,8 @@ class Indexer
         }
         if result["blip_id"]
           doc.boost = 5.0
+        else
+          doc.boost = 0.0
         end
         index << doc
       end
