@@ -35,7 +35,7 @@ class Indexer
           :tags => result["tags"]
         }
         if result["blip_id"]
-          doc.boost = 5.0
+          doc.boost = 1.0
         else
           doc.boost = 0.0
         end
