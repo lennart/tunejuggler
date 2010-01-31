@@ -35,6 +35,8 @@ get "/blip/timeline/:user.json" do |user|
   end
   unless additions.empty?
     Resque.enqueue Indexer, additions
+  else
+    puts "No update on index needed"
   end
   blips.to_json
 end
@@ -50,6 +52,8 @@ get "/blip/:user.json" do |user|
   end
   unless additions.empty?
     Resque.enqueue Indexer, additions
+  else
+    puts "No update on index needed"
   end
   blips.to_json
 end
@@ -135,6 +139,8 @@ post "/search.json" do
 
     unless additions.empty?
       Resque.enqueue(Indexer,additions)
+    else
+      puts "No update on index needed"
     end
     results
   else
