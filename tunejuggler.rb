@@ -34,6 +34,7 @@ get "/blip/timeline/:user.json" do |user|
     blip
   end
   unless additions.empty?
+    puts "Enqueuing #{additions.size} Additions"
     Resque.enqueue Indexer, additions
   else
     puts "No update on index needed"
@@ -51,6 +52,7 @@ get "/blip/:user.json" do |user|
     blip
   end
   unless additions.empty?
+    puts "Enqueuing #{additions.size} Additions"
     Resque.enqueue Indexer, additions
   else
     puts "No update on index needed"
