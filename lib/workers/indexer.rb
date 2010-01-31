@@ -7,6 +7,7 @@ class Indexer
                                                     :store => :no, 
                                                     :index => :untokenized_omit_norms)
         field_infos.add_field(:title, :store => :yes, :index => :yes, :boost => 10.0)
+        field_infos.add_field(:artist, :store => :yes, :index => :yes, :boost => 9.0)
         field_infos.add_field(:video_id, :store => :yes, :index => :yes, :boost => 15.0)
         field_infos.add_field(:tags, :store => :yes, :index => :yes, :boost => 0.1)
         field_infos.add_field(:doc_id, :store => :yes, :index => :no)
@@ -27,6 +28,7 @@ class Indexer
           :video_id => result["video_id"],
           :doc_id => result["id"],
           :title => result["title"],
+          :artist => result["artist"],
           :tags => result["tags"]
         } 
       end
