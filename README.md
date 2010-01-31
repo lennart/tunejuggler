@@ -68,6 +68,11 @@ __PUT__
          _(Note: you can optionally supply any other properties you want to store along with the song)_
 
 __GET__
+* `/collections.json`
+    Fetches all Collections as a JSON Array
+
+* `/collections/:id/tracks.json`
+    Fetches all Tracks and the Collection with :id as a JSON Array
 
 * `/blip/:user.json`  
     List a DJ's recent blips  

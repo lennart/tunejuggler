@@ -115,18 +115,6 @@ post "/collections/:id/tracks.json" do |collection_id|
   result
 end
 
-put "/songs/:id.json" do |id|
-  json = read_body_as_json
-#  halt [404, "Collection not found"] if c.nil?
-  s = Song.find(:id => id)
-#  s.set_except(json, "id")
- # s.merge json
-#  halt [400, "Song data invalid"] unless s.save
- # c.add_song s
- # c.save
-#  [c,*c.songs].to_json
-end
-
 delete "/songs/:id.json" do |id|
   s = Song.find(:id => id)
   halt [400, "Song data invalid"] unless s
@@ -148,8 +136,6 @@ post "/search.json" do
     unless additions.empty?
       Resque.enqueue(Indexer,additions)
     end
-    Son
-
     results
   else
     results
