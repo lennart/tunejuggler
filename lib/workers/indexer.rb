@@ -1,3 +1,6 @@
+class Hash
+  include Ferret::BoostMixin
+end
 class Indexer
   @queue = :index
   class << self
@@ -24,13 +27,17 @@ class Indexer
     def perform args
       additions = args
       additions.each do |result|
-        index << {
+        doc = {
           :video_id => result["video_id"],
           :doc_id => result["id"],
           :title => result["title"],
           :artist => result["artist"],
           :tags => result["tags"]
-        } 
+        }
+        if result["blip_id"]
+          doc.boost = 5.0
+        end
+        index << doc
       end
       puts "Index contains #{index.size} documents"
     end
