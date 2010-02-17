@@ -1,5 +1,10 @@
+DEPRECATED
+==========
+this project will eventually be superseded by the, "a lot faster variant" in Erlang called [eqlizr](http://github.com/lennart/eqlizr) and a neat plugin integrated into [playdar](http://github.com/RJ2/playdar-core).  
+
 tuneJuggler
 ===========
+
 
 Finally lets you  
 
